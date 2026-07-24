@@ -1,73 +1,103 @@
-%%writefile README.md
-# 🚦 AI-Based Intelligent Traffic Monitoring and Smart Traffic Signal Management System
+<div align="center">
 
-A final-year Smart City engineering project that combines **Computer Vision**, **Machine Learning**, and **real-time analytics** to monitor live traffic, dynamically manage signal timing, prioritize emergency vehicles, detect violations, and forecast short-term traffic volume — all through a professional Streamlit dashboard.
+# 🚦 AI-Based Intelligent Traffic Monitoring & Smart Traffic Signal Management System
 
-![Status](https://img.shields.io/badge/status-in--development-orange)
-![Python](https://img.shields.io/badge/python-3.12-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+### A Smart City AI application that monitors live traffic, dynamically controls signals, prioritizes emergency vehicles, detects violations, and forecasts congestion — powered by YOLOv8, ByteTrack, and Machine Learning.
 
----
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![YOLOv8](https://img.shields.io/badge/YOLOv8-Ultralytics-00FFFF?style=for-the-badge)](https://github.com/ultralytics/ultralytics)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-In%20Development-orange?style=for-the-badge)]()
 
-## 📌 Overview
+**[🔴 Live Demo](#-live-demo)** · **[📖 Documentation](#-module-reference)** · **[🐛 Report Bug](../../issues)** · **[✨ Request Feature](../../issues)**
 
-Traditional traffic signals run on fixed timers regardless of actual road conditions, leading to unnecessary congestion, delayed emergency vehicle passage, and no automated way to catch violations. This system replaces that with an AI-driven pipeline that:
-
-- Detects and tracks vehicles in real time using **YOLOv8** + **ByteTrack**
-- Classifies traffic density per lane and **dynamically adjusts signal timing**
-- Detects **emergency vehicles** and overrides the signal to give them priority
-- Estimates vehicle **speed** and flags overspeeding
-- Logs **red-light violations, wrong-lane driving, and illegal parking**
-- Forecasts traffic volume 5–10 minutes ahead using **ML models** (Random Forest, XGBoost, Linear Regression)
-- Presents everything through a **modern dark-themed Streamlit dashboard**
+</div>
 
 ---
 
-## 🖥️ Live Demo (Dashboard)
+## 🎯 About The Project
 
-The dashboard currently runs on simulated/dummy data and is fully functional standalone — AI modules connect to it as a data source without changing the UI.
+Traditional traffic signals run on **fixed timers**, ignoring real road conditions — causing congestion, delayed emergency response, and zero automated violation enforcement.
 
-Run locally:
-```bash
-streamlit run app.py
-```
+This project fixes that with an end-to-end AI pipeline:
 
-Run from Google Colab (via tunnel):
-```bash
-!streamlit run app.py --server.port 8501 --server.headless true &
-!npx localtunnel --port 8501
-```
+- 🚗 **Real-time vehicle detection & tracking** — YOLOv8 + ByteTrack
+- 🚦 **Adaptive signal timing** — based on live traffic density, not fixed schedules
+- 🚑 **Emergency vehicle priority** — auto-overrides signal for ambulances/police/fire trucks
+- ⚡ **Speed estimation & overspeed alerts**
+- 📸 **Automated violation detection** — red-light jumping, wrong-lane driving, illegal parking
+- 🔮 **ML-based traffic forecasting** — Random Forest / XGBoost / Linear Regression
+- 📊 **Professional live dashboard** — built with Streamlit + Plotly
+
+---
+
+## 🔴 Live Demo
+
+| Resource | Link |
+|---|---|
+| 🌐 **Live Dashboard** | [Click here to view →]([https://your-deployment-link.streamlit.app](https://secluded-profile-bride.ngrok-free.dev/)) |
+| 🎬 **Demo Video** | [Watch demo →](https://your-demo-video-link.com) |
+| 📓 **Colab Notebook** | [Open in Colab →](https://colab.research.google.com/drive/your-notebook-id) |
+
+> ⚠️ Replace the placeholder links above with your actual Streamlit Community Cloud / Render / Hugging Face Spaces deployment URL once live.
+
+---
+
+## 📸 Screenshots
+
+<div align="center">
+
+| Dashboard | Live Detection |
+|---|---|
+| ![Dashboard](screenshots/dashboard.png) | ![Live Detection](screenshots/live_detection.png) |
+
+| Analytics | Prediction |
+|---|---|
+| ![Analytics](screenshots/analytics.png) | ![Prediction](screenshots/prediction.png) |
+
+</div>
+
+> 📁 Add your actual screenshots to the `screenshots/` folder with these exact filenames so they render automatically above.
 
 ---
 
 ## 🏗️ System Architecture
 
+```mermaid
+graph LR
+    A[📹 Camera Feed] --> B[detector.py<br/>YOLOv8]
+    B --> C[tracker.py<br/>ByteTrack]
+    C --> D[density.py]
+    C --> E[speed_estimator.py]
+    C --> F[emergency_vehicle.py]
+    C --> G[violation modules]
+    D --> H[signal_controller.py]
+    F --> H
+    D --> I[(database.py<br/>SQLite)]
+    E --> I
+    G --> I
+    H --> I
+    I --> J[prediction.py<br/>ML Forecasting]
+    I --> K[app.py<br/>Streamlit Dashboard]
+    J --> K
 ```
-Camera Feed
-    │
-    ▼
-detector.py  (YOLOv8 — vehicle/person/traffic-light detection)
-    │
-    ▼
-tracker.py  (ByteTrack — persistent unique IDs across frames)
-    │
-    ├──► density.py         → traffic density classification + lane assignment
-    ├──► speed_estimator.py → vehicle speed from pixel displacement
-    ├──► emergency_vehicle.py → ambulance/police/fire truck detection
-    ├──► red_light_violation.py / wrong_lane.py / parking_detection.py
-    │
-    ▼
-signal_controller.py  (adaptive signal timing + emergency override)
-    │
-    ▼
-database.py  (SQLite — all events, logs, violations)
-    │
-    ▼
-prediction.py  (ML forecasting — Random Forest / XGBoost / Linear Regression)
-    │
-    ▼
-app.py  (Streamlit Dashboard — visualizes everything above)
-```
+
+---
+
+## 🧰 Tech Stack
+
+<div align="center">
+
+| Layer | Technologies |
+|---|---|
+| **Computer Vision** | ![YOLOv8](https://img.shields.io/badge/-YOLOv8-00FFFF?style=flat-square) ![OpenCV](https://img.shields.io/badge/-OpenCV-5C3EE8?style=flat-square&logo=opencv&logoColor=white) ![ByteTrack](https://img.shields.io/badge/-ByteTrack-black?style=flat-square) |
+| **Backend** | ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white) ![Pandas](https://img.shields.io/badge/-Pandas-150458?style=flat-square&logo=pandas&logoColor=white) ![NumPy](https://img.shields.io/badge/-NumPy-013243?style=flat-square&logo=numpy&logoColor=white) |
+| **Machine Learning** | ![Scikit-Learn](https://img.shields.io/badge/-Scikit--Learn-F7931E?style=flat-square&logo=scikitlearn&logoColor=white) ![XGBoost](https://img.shields.io/badge/-XGBoost-black?style=flat-square) |
+| **Database** | ![SQLite](https://img.shields.io/badge/-SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white) |
+| **Dashboard** | ![Streamlit](https://img.shields.io/badge/-Streamlit-FF4B4B?style=flat-square&logo=streamlit&logoColor=white) ![Plotly](https://img.shields.io/badge/-Plotly-3F4F75?style=flat-square&logo=plotly&logoColor=white) |
+
+</div>
 
 ---
 
@@ -76,46 +106,72 @@ app.py  (Streamlit Dashboard — visualizes everything above)
 ```
 TrafficMonitoringSystem/
 │
-├── app.py                    # Main Streamlit dashboard (7 pages)
-├── detector.py                # YOLOv8 detection wrapper
-├── tracker.py                 # ByteTrack multi-object tracking
-├── density.py                 # Density classification + lane assignment
-├── signal_controller.py       # Adaptive signal timing logic
-├── speed_estimator.py         # Pixel-displacement speed estimation
-├── emergency_vehicle.py       # Emergency vehicle detection hook
-├── lane_detection.py          # Virtual lane boundary logic
-├── red_light_violation.py     # Red-light violation detection
-├── wrong_lane.py               # Wrong-direction driving detection
-├── parking_detection.py       # Illegal/stationary parking detection
-├── analytics.py                # Report generation (CSV/Excel/PDF)
-├── prediction.py               # ML traffic volume forecasting
-├── database.py                 # SQLite schema + CRUD operations
-├── config.py                   # Central configuration (thresholds, paths, timing)
-├── utils.py                    # Drawing / HUD overlay helpers
+├── app.py                    # 🖥️ Main Streamlit dashboard (7 pages)
+├── detector.py                # 🎯 YOLOv8 detection wrapper
+├── tracker.py                 # 🔗 ByteTrack multi-object tracking
+├── density.py                 # 📊 Density classification + lane assignment
+├── signal_controller.py       # 🚦 Adaptive signal timing logic
+├── speed_estimator.py         # ⚡ Pixel-displacement speed estimation
+├── emergency_vehicle.py       # 🚑 Emergency vehicle detection hook
+├── lane_detection.py          # 🛣️ Virtual lane boundary logic
+├── red_light_violation.py     # 🔴 Red-light violation detection
+├── wrong_lane.py               # ↩️ Wrong-direction driving detection
+├── parking_detection.py       # 🅿️ Illegal parking detection
+├── analytics.py                # 📈 Report generation (CSV/Excel/PDF)
+├── prediction.py               # 🔮 ML traffic forecasting
+├── database.py                 # 🗄️ SQLite schema + operations
+├── config.py                   # ⚙️ Central configuration
+├── utils.py                    # 🧩 Drawing / HUD helpers
 ├── requirements.txt
 ├── README.md
-├── traffic.db                  # SQLite database (auto-created)
+├── traffic.db                  # Auto-created SQLite DB
 │
 ├── models/                     # YOLOv8 weights
 ├── videos/                     # Input traffic footage
-├── datasets/                   # Training data (Metro Interstate Traffic Volume)
-├── reports/                    # Generated CSV/Excel/PDF reports
+├── datasets/                   # Training data
+├── reports/                    # Generated reports
 ├── charts/                     # Exported chart images
-└── screenshots/                # Violation evidence screenshots
+└── screenshots/                # Violation evidence + demo screenshots
 ```
 
 ---
 
-## ⚙️ Tech Stack
+## 🚀 Getting Started
 
-| Category | Technologies |
-|---|---|
-| **AI / Computer Vision** | YOLOv8 (Ultralytics), ByteTrack, OpenCV |
-| **Backend / Logic** | Python 3.12, NumPy, Pandas |
-| **Machine Learning** | Scikit-Learn, Random Forest, XGBoost, Linear Regression |
-| **Database** | SQLite |
-| **Dashboard / Visualization** | Streamlit, Plotly, Matplotlib |
-| **Image Handling** | Pillow |
+### Prerequisites
+- Python 3.12+
+- pip
+- (Optional) GPU with CUDA for faster YOLOv8 inference
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/your-username/TrafficMonitoringSystem.git
+cd TrafficMonitoringSystem
+```
+
+### 2. Create a virtual environment
+```bash
+python -m venv venv
+source venv/bin/activate      # Windows: venv\Scripts\activate
+```
+
+### 3. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the dashboard
+```bash
+streamlit run app.py
+```
+
+The dashboard will open at `http://localhost:8501`.
+
+### 5. (Optional) Run on Google Colab
+```python
+!streamlit run app.py --server.port 8501 --server.headless true &
+!npx localtunnel --port 8501
+```
 
 ---
 
@@ -123,134 +179,102 @@ TrafficMonitoringSystem/
 
 | File | Responsibility |
 |---|---|
-| `detector.py` | Runs pretrained YOLOv8 COCO model to detect cars, trucks, buses, motorcycles, bicycles, pedestrians, traffic lights, and stop signs. |
-| `tracker.py` | Wraps ByteTrack to assign each detected vehicle a persistent ID and maintain its movement history across frames. |
-| `density.py` | Classifies live traffic into **Low / Medium / High / Very High** bands and assigns each vehicle to one of 3 virtual lanes. |
-| `signal_controller.py` | Calculates green-signal duration from current density band; supports emergency override to force a lane green. |
-| `speed_estimator.py` | Estimates real-world speed (km/h) from tracked pixel displacement; flags vehicles exceeding the configured limit. |
-| `emergency_vehicle.py` | Integration point for a fine-tuned classifier to detect ambulances, police vehicles, and fire trucks (COCO alone can't distinguish these). |
-| `red_light_violation.py` | Flags vehicles crossing the stop line while the signal is red; stores a screenshot, timestamp, and vehicle ID. |
-| `wrong_lane.py` | Detects vehicles moving against the expected traffic direction. |
-| `parking_detection.py` | Flags vehicles that remain stationary beyond a configured time threshold. |
-| `database.py` | Manages the SQLite schema and all read/write operations across 7 tables. |
-| `analytics.py` | Generates downloadable CSV, Excel, and PDF traffic reports. |
-| `prediction.py` | Trains and serves ML models on the Metro Interstate Traffic Volume dataset to forecast near-term traffic volume and recommend signal timing. |
-| `utils.py` | Shared drawing utilities — bounding boxes, labels, and live HUD overlay (FPS, density, signal timer). |
-| `config.py` | Single source of truth for thresholds, class mappings, signal timing rules, and file paths. |
+| `detector.py` | Runs pretrained YOLOv8 COCO model to detect cars, trucks, buses, motorcycles, bicycles, pedestrians, traffic lights, and stop signs |
+| `tracker.py` | Wraps ByteTrack to assign persistent IDs and maintain movement history per vehicle |
+| `density.py` | Classifies traffic into **Low / Medium / High / Very High** and assigns vehicles to 3 virtual lanes |
+| `signal_controller.py` | Calculates green-signal duration from density; supports emergency override |
+| `speed_estimator.py` | Estimates km/h from pixel displacement; flags overspeeding |
+| `emergency_vehicle.py` | Integration point for emergency vehicle classifier (ambulance/police/fire truck) |
+| `red_light_violation.py` | Flags vehicles crossing the stop line on red; stores screenshot + timestamp |
+| `wrong_lane.py` | Detects vehicles driving against traffic flow |
+| `parking_detection.py` | Flags vehicles stationary beyond a time threshold |
+| `database.py` | Manages SQLite schema and CRUD across 7 tables |
+| `analytics.py` | Generates downloadable CSV / Excel / PDF reports |
+| `prediction.py` | Trains/serves ML models for short-term traffic forecasting |
+| `utils.py` | Bounding box drawing and live HUD overlay utilities |
+| `config.py` | Single source of truth for thresholds, mappings, and timing rules |
 
 ---
 
 ## 🗄️ Database Schema
 
-SQLite database (`traffic.db`) with 7 tables:
-
 | Table | Stores |
 |---|---|
-| `vehicle_events` | Every counted vehicle — track ID, type, lane, timestamp |
+| `vehicle_events` | Track ID, vehicle type, lane, timestamp |
 | `density_log` | Vehicle count + density level over time |
 | `speed_log` | Per-vehicle speed readings and overspeed flags |
 | `violations` | Violation type, track ID, screenshot path, timestamp |
-| `signal_log` | Signal duration decisions and their triggering density level |
+| `signal_log` | Signal duration decisions and triggering density level |
 | `prediction_log` | ML forecast outputs and horizon |
-| `emergency_log` | Detected emergency vehicles and the lane they were given priority in |
+| `emergency_log` | Detected emergency vehicles and priority lane |
 
 ---
 
 ## 📊 Dashboard Pages
 
-The Streamlit dashboard (`app.py`) has a dark-themed sidebar with 7 pages:
-
-1. **📊 Dashboard** — Live KPI cards (Total Vehicles, Cars, Bus, Truck, Bike, Avg Speed, Density, Signal Status, Emergency Status) plus Vehicle Distribution, Hourly Traffic, Density Trend, and Lane-wise Count charts.
-2. **🎥 Live Detection** — Live camera feed panel with bounding boxes/tracking IDs (once AI modules are connected), frame stats, and a real-time detected-objects table.
-3. **📈 Analytics** — Deeper breakdowns: vehicle distribution, hourly pattern with peak-hour detection, density trend, average speed vs. speed limit, lane-wise comparison, and a weekly traffic heatmap.
-4. **📄 Reports** — Filterable violation log with CSV/Excel/PDF export and a report summary table.
-5. **🔮 Prediction** — ML-based short-term traffic forecast, model selector (Random Forest / XGBoost / Linear Regression), and historical-vs-predicted comparison chart.
-6. **⚙️ Settings** — Configure detection thresholds, YOLO model choice, class filters, signal timing rules, speed limit, calibration, and alert preferences.
-7. **ℹ️ About** — Project summary and system architecture diagram.
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Python 3.12
-- pip
-
-### Installation
-```bash
-git clone <repo-url>
-cd TrafficMonitoringSystem
-pip install -r requirements.txt
-```
-
-### Run the dashboard
-```bash
-streamlit run app.py
-```
-
-### Run detection on a video (core pipeline)
-```bash
-python -c "
-from detector import VehicleDetector
-from tracker import VehicleTracker
-# See project notebook / main loop for full example
-"
-```
-
----
-
-## 🔧 Configuration
-
-All tunable parameters live in `config.py`:
-
-- `CONFIDENCE_THRESHOLD`, `IOU_THRESHOLD` — YOLO detection sensitivity
-- `DENSITY_THRESHOLDS` — vehicle-count ranges for Low/Medium/High/Very High
-- `SIGNAL_TIMING` — green-light duration per density band
-- `SPEED_LIMIT_KMPH`, `PIXELS_PER_METER` — speed estimation and overspeed threshold
-- `LANE_BOUNDARIES_FRACTIONS` — virtual lane boundary positions
-
-> ⚠️ **Calibration note:** `PIXELS_PER_METER` must be calibrated against your actual camera footage (e.g. using a known lane width) before speed readings are accurate.
-
----
-
-## 🧠 Machine Learning
-
-Traffic volume prediction is trained on the **Metro Interstate Traffic Volume Dataset**, comparing:
-
-- Random Forest
-- XGBoost
-- Linear Regression
-
-Outputs: predicted volume for the next 5 and 10 minutes, and a recommended signal duration.
+| Page | What it shows |
+|---|---|
+| 📊 **Dashboard** | Live KPI cards + Vehicle Distribution, Hourly Traffic, Density Trend, Lane-wise Count |
+| 🎥 **Live Detection** | Live feed with bounding boxes/IDs, frame stats, detected-objects table |
+| 📈 **Analytics** | Distribution, hourly pattern, density trend, speed vs. limit, lane comparison, weekly heatmap |
+| 📄 **Reports** | Filterable violation log + CSV/Excel/PDF export |
+| 🔮 **Prediction** | ML forecast, model selector, historical vs. predicted chart |
+| ⚙️ **Settings** | Detection thresholds, signal rules, speed limit, alert preferences |
+| ℹ️ **About** | Project summary + architecture diagram |
 
 ---
 
 ## ⚠️ Known Limitations
 
-- The pretrained YOLOv8 COCO model does **not** natively distinguish ambulances/police/fire trucks from regular cars/trucks — `emergency_vehicle.py` is an integration hook that needs a fine-tuned classifier for real emergency detection.
-- Speed estimation accuracy depends entirely on correct `PIXELS_PER_METER` calibration per camera.
-- Current signal logic is simplified for a single-approach demo; a full multi-approach intersection needs per-lane phase sequencing.
+- Pretrained YOLOv8 COCO doesn't natively distinguish ambulances/police/fire trucks — `emergency_vehicle.py` needs a fine-tuned classifier for production use
+- Speed accuracy depends on correct `PIXELS_PER_METER` calibration per camera
+- Current signal logic is simplified for single-approach demo — full intersections need per-lane phase sequencing
 
 ---
 
-## 🛣️ Future Scope
+## 🛣️ Roadmap
 
-- Multi-junction coordinated signal control
-- Real CCTV/RTSP stream integration
-- Mobile app for citizens and traffic police
-- Fine-tuned emergency vehicle classifier
-- Edge deployment (Jetson/Raspberry Pi) for on-site real-time processing
+- [ ] Multi-junction coordinated signal control
+- [ ] Real CCTV/RTSP live stream integration
+- [ ] Fine-tuned emergency vehicle classifier
+- [ ] Mobile app for citizens & traffic police
+- [ ] Edge deployment (Jetson/Raspberry Pi)
+
+See [open issues](../../issues) for the full list of proposed features.
+
+---
+
+## 🤝 Contributing
+
+Contributions make the open-source community amazing. Any contributions are **greatly appreciated**.
+
+1. Fork the repo
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
 ## 📜 License
 
-This project is developed for academic purposes as a final-year university project.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
 ## 🙌 Acknowledgements
 
 - [Ultralytics YOLOv8](https://github.com/ultralytics/ultralytics)
-- [ByteTrack](https://github.com/ifzhang/ByteTrack) / [Supervision](https://github.com/roboflow/supervision)
-- Metro Interstate Traffic Volume Dataset (UCI Machine Learning Repository)
+- [Supervision (ByteTrack)](https://github.com/roboflow/supervision)
+- [Streamlit](https://streamlit.io/)
+- Metro Interstate Traffic Volume Dataset — UCI Machine Learning Repository
+
+---
+
+<div align="center">
+
+**⭐ Star this repo if you found it useful!**
+
+Made with ❤️ for Smart Cities
+
+</div>
