@@ -10,7 +10,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-In%20Development-orange?style=for-the-badge)]()
 
-**[🔴 Live Demo](#-live-demo)** · **[📖 Documentation](#-module-reference)** · **[🐛 Report Bug](../../issues)** · **[✨ Request Feature](../../issues)**
+**[🔴 Live Demo](https://intelligent-traffic-monitoring-systemds-njdm4fnuegvbvpjxytphd7.streamlit.app/)** · **[📖 Documentation](#-module-reference)** · **[🐛 Report Bug](../../issues)** · **[✨ Request Feature](../../issues)**
 
 </div>
 
@@ -36,29 +36,8 @@ This project fixes that with an end-to-end AI pipeline:
 
 | Resource | Link |
 |---|---|
-| 🌐 **Live Dashboard** | [Click here to view →]([https://your-deployment-link.streamlit.app](https://secluded-profile-bride.ngrok-free.dev/)) |
-| 🎬 **Demo Video** | [Watch demo →](https://your-demo-video-link.com) |
-| 📓 **Colab Notebook** | [Open in Colab →](https://colab.research.google.com/drive/your-notebook-id) |
-
-> ⚠️ Replace the placeholder links above with your actual Streamlit Community Cloud / Render / Hugging Face Spaces deployment URL once live.
-
----
-
-## 📸 Screenshots
-
-<div align="center">
-
-| Dashboard | Live Detection |
-|---|---|
-| ![Dashboard](screenshots/dashboard.png) | ![Live Detection](screenshots/live_detection.png) |
-
-| Analytics | Prediction |
-|---|---|
-| ![Analytics](screenshots/analytics.png) | ![Prediction](screenshots/prediction.png) |
-
-</div>
-
-> 📁 Add your actual screenshots to the `screenshots/` folder with these exact filenames so they render automatically above.
+| 🌐 **Live Dashboard** | [Click here to view →](https://intelligent-traffic-monitoring-systemds-njdm4fnuegvbvpjxytphd7.streamlit.app/) |
+| 🎬 **Demo Video** | [Watch demo →](https://drive.google.com/file/d/1VUOGlHYSaIKIzUWbqSGxVWmNzUzzZh-M/view?usp=drive_link) |
 
 ---
 
@@ -104,7 +83,7 @@ graph LR
 ## 📂 Project Structure
 
 ```
-TrafficMonitoringSystem/
+intelligent-traffic-monitoring-system_DS/
 │
 ├── app.py                    # 🖥️ Main Streamlit dashboard (7 pages)
 ├── detector.py                # 🎯 YOLOv8 detection wrapper
@@ -113,25 +92,11 @@ TrafficMonitoringSystem/
 ├── signal_controller.py       # 🚦 Adaptive signal timing logic
 ├── speed_estimator.py         # ⚡ Pixel-displacement speed estimation
 ├── emergency_vehicle.py       # 🚑 Emergency vehicle detection hook
-├── lane_detection.py          # 🛣️ Virtual lane boundary logic
-├── red_light_violation.py     # 🔴 Red-light violation detection
-├── wrong_lane.py               # ↩️ Wrong-direction driving detection
-├── parking_detection.py       # 🅿️ Illegal parking detection
-├── analytics.py                # 📈 Report generation (CSV/Excel/PDF)
-├── prediction.py               # 🔮 ML traffic forecasting
 ├── database.py                 # 🗄️ SQLite schema + operations
 ├── config.py                   # ⚙️ Central configuration
 ├── utils.py                    # 🧩 Drawing / HUD helpers
 ├── requirements.txt
-├── README.md
-├── traffic.db                  # Auto-created SQLite DB
-│
-├── models/                     # YOLOv8 weights
-├── videos/                     # Input traffic footage
-├── datasets/                   # Training data
-├── reports/                    # Generated reports
-├── charts/                     # Exported chart images
-└── screenshots/                # Violation evidence + demo screenshots
+└── README.md
 ```
 
 ---
@@ -145,8 +110,8 @@ TrafficMonitoringSystem/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/TrafficMonitoringSystem.git
-cd TrafficMonitoringSystem
+git clone https://github.com/Rahim-Kamran/intelligent-traffic-monitoring-system_DS.git
+cd intelligent-traffic-monitoring-system_DS
 ```
 
 ### 2. Create a virtual environment
@@ -167,12 +132,6 @@ streamlit run app.py
 
 The dashboard will open at `http://localhost:8501`.
 
-### 5. (Optional) Run on Google Colab
-```python
-!streamlit run app.py --server.port 8501 --server.headless true &
-!npx localtunnel --port 8501
-```
-
 ---
 
 ## 🧩 Module Reference
@@ -185,12 +144,7 @@ The dashboard will open at `http://localhost:8501`.
 | `signal_controller.py` | Calculates green-signal duration from density; supports emergency override |
 | `speed_estimator.py` | Estimates km/h from pixel displacement; flags overspeeding |
 | `emergency_vehicle.py` | Integration point for emergency vehicle classifier (ambulance/police/fire truck) |
-| `red_light_violation.py` | Flags vehicles crossing the stop line on red; stores screenshot + timestamp |
-| `wrong_lane.py` | Detects vehicles driving against traffic flow |
-| `parking_detection.py` | Flags vehicles stationary beyond a time threshold |
-| `database.py` | Manages SQLite schema and CRUD across 7 tables |
-| `analytics.py` | Generates downloadable CSV / Excel / PDF reports |
-| `prediction.py` | Trains/serves ML models for short-term traffic forecasting |
+| `database.py` | Manages SQLite schema and CRUD across vehicle/density/speed/signal tables |
 | `utils.py` | Bounding box drawing and live HUD overlay utilities |
 | `config.py` | Single source of truth for thresholds, mappings, and timing rules |
 
@@ -203,10 +157,7 @@ The dashboard will open at `http://localhost:8501`.
 | `vehicle_events` | Track ID, vehicle type, lane, timestamp |
 | `density_log` | Vehicle count + density level over time |
 | `speed_log` | Per-vehicle speed readings and overspeed flags |
-| `violations` | Violation type, track ID, screenshot path, timestamp |
 | `signal_log` | Signal duration decisions and triggering density level |
-| `prediction_log` | ML forecast outputs and horizon |
-| `emergency_log` | Detected emergency vehicles and priority lane |
 
 ---
 
@@ -217,7 +168,7 @@ The dashboard will open at `http://localhost:8501`.
 | 📊 **Dashboard** | Live KPI cards + Vehicle Distribution, Hourly Traffic, Density Trend, Lane-wise Count |
 | 🎥 **Live Detection** | Live feed with bounding boxes/IDs, frame stats, detected-objects table |
 | 📈 **Analytics** | Distribution, hourly pattern, density trend, speed vs. limit, lane comparison, weekly heatmap |
-| 📄 **Reports** | Filterable violation log + CSV/Excel/PDF export |
+| 📄 **Reports** | Filterable violation log + CSV export |
 | 🔮 **Prediction** | ML forecast, model selector, historical vs. predicted chart |
 | ⚙️ **Settings** | Detection thresholds, signal rules, speed limit, alert preferences |
 | ℹ️ **About** | Project summary + architecture diagram |
@@ -229,11 +180,13 @@ The dashboard will open at `http://localhost:8501`.
 - Pretrained YOLOv8 COCO doesn't natively distinguish ambulances/police/fire trucks — `emergency_vehicle.py` needs a fine-tuned classifier for production use
 - Speed accuracy depends on correct `PIXELS_PER_METER` calibration per camera
 - Current signal logic is simplified for single-approach demo — full intersections need per-lane phase sequencing
+- The live dashboard currently runs on simulated/dummy data; real YOLOv8 detection pipeline is wired separately in Colab
 
 ---
 
 ## 🛣️ Roadmap
 
+- [ ] Wire live YOLOv8 detection into the deployed dashboard
 - [ ] Multi-junction coordinated signal control
 - [ ] Real CCTV/RTSP live stream integration
 - [ ] Fine-tuned emergency vehicle classifier
@@ -253,12 +206,6 @@ Contributions make the open-source community amazing. Any contributions are **gr
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
-
----
-
-## 📜 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
