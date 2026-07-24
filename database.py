@@ -1,155 +1,131 @@
-{
- "cells": [
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "id": "6d206f68",
-   "metadata": {
-    "vscode": {
-     "languageId": "plaintext"
-    }
-   },
-   "outputs": [],
-   "source": [
-    "%%writefile database.py\n",
-    "\"\"\"\n",
-    "SQLite persistence layer for the Traffic Monitoring System.\n",
-    "\"\"\"\n",
-    "\n",
-    "import sqlite3\n",
-    "from datetime import datetime\n",
-    "from contextlib import contextmanager\n",
-    "from config import DB_PATH\n",
-    "\n",
-    "\n",
-    "class Database:\n",
-    "    def __init__(self, db_path: str = DB_PATH):\n",
-    "        self.db_path = db_path\n",
-    "        self._init_tables()\n",
-    "\n",
-    "    @contextmanager\n",
-    "    def _connect(self):\n",
-    "        conn = sqlite3.connect(self.db_path)\n",
-    "        try:\n",
-    "            yield conn\n",
-    "            conn.commit()\n",
-    "        finally:\n",
-    "            conn.close()\n",
-    "\n",
-    "    def _init_tables(self):\n",
-    "        schema = \"\"\"\n",
-    "        CREATE TABLE IF NOT EXISTS vehicle_events (\n",
-    "            id INTEGER PRIMARY KEY AUTOINCREMENT,\n",
-    "            track_id INTEGER,\n",
-    "            vehicle_type TEXT,\n",
-    "            lane INTEGER,\n",
-    "            timestamp TEXT\n",
-    "        );\n",
-    "\n",
-    "        CREATE TABLE IF NOT EXISTS density_log (\n",
-    "            id INTEGER PRIMARY KEY AUTOINCREMENT,\n",
-    "            vehicle_count INTEGER,\n",
-    "            density_level TEXT,\n",
-    "            timestamp TEXT\n",
-    "        );\n",
-    "\n",
-    "        CREATE TABLE IF NOT EXISTS speed_log (\n",
-    "            id INTEGER PRIMARY KEY AUTOINCREMENT,\n",
-    "            track_id INTEGER,\n",
-    "            vehicle_type TEXT,\n",
-    "            speed_kmph REAL,\n",
-    "            overspeed INTEGER,\n",
-    "            timestamp TEXT\n",
-    "        );\n",
-    "\n",
-    "        CREATE TABLE IF NOT EXISTS violations (\n",
-    "            id INTEGER PRIMARY KEY AUTOINCREMENT,\n",
-    "            violation_type TEXT,\n",
-    "            track_id INTEGER,\n",
-    "            screenshot_path TEXT,\n",
-    "            timestamp TEXT\n",
-    "        );\n",
-    "\n",
-    "        CREATE TABLE IF NOT EXISTS signal_log (\n",
-    "            id INTEGER PRIMARY KEY AUTOINCREMENT,\n",
-    "            density_level TEXT,\n",
-    "            signal_duration INTEGER,\n",
-    "            timestamp TEXT\n",
-    "        );\n",
-    "\n",
-    "        CREATE TABLE IF NOT EXISTS prediction_log (\n",
-    "            id INTEGER PRIMARY KEY AUTOINCREMENT,\n",
-    "            horizon_minutes INTEGER,\n",
-    "            predicted_volume REAL,\n",
-    "            timestamp TEXT\n",
-    "        );\n",
-    "\n",
-    "        CREATE TABLE IF NOT EXISTS emergency_log (\n",
-    "            id INTEGER PRIMARY KEY AUTOINCREMENT,\n",
-    "            vehicle_type TEXT,\n",
-    "            lane INTEGER,\n",
-    "            timestamp TEXT\n",
-    "        );\n",
-    "        \"\"\"\n",
-    "        with self._connect() as conn:\n",
-    "            conn.executescript(schema)\n",
-    "\n",
-    "    def log_vehicle_event(self, track_id, vehicle_type, lane):\n",
-    "        with self._connect() as conn:\n",
-    "            conn.execute(\n",
-    "                \"INSERT INTO vehicle_events (track_id, vehicle_type, lane, timestamp) VALUES (?,?,?,?)\",\n",
-    "                (track_id, vehicle_type, lane, datetime.now().isoformat()),\n",
-    "            )\n",
-    "\n",
-    "    def log_density(self, vehicle_count, density_level):\n",
-    "        with self._connect() as conn:\n",
-    "            conn.execute(\n",
-    "                \"INSERT INTO density_log (vehicle_count, density_level, timestamp) VALUES (?,?,?)\",\n",
-    "                (vehicle_count, density_level, datetime.now().isoformat()),\n",
-    "            )\n",
-    "\n",
-    "    def log_speed(self, track_id, vehicle_type, speed_kmph, overspeed):\n",
-    "        with self._connect() as conn:\n",
-    "            conn.execute(\n",
-    "                \"INSERT INTO speed_log (track_id, vehicle_type, speed_kmph, overspeed, timestamp) VALUES (?,?,?,?,?)\",\n",
-    "                (track_id, vehicle_type, speed_kmph, int(overspeed), datetime.now().isoformat()),\n",
-    "            )\n",
-    "\n",
-    "    def log_violation(self, violation_type, track_id, screenshot_path):\n",
-    "        with self._connect() as conn:\n",
-    "            conn.execute(\n",
-    "                \"INSERT INTO violations (violation_type, track_id, screenshot_path, timestamp) VALUES (?,?,?,?)\",\n",
-    "                (violation_type, track_id, screenshot_path, datetime.now().isoformat()),\n",
-    "            )\n",
-    "\n",
-    "    def log_signal(self, density_level, signal_duration):\n",
-    "        with self._connect() as conn:\n",
-    "            conn.execute(\n",
-    "                \"INSERT INTO signal_log (density_level, signal_duration, timestamp) VALUES (?,?,?)\",\n",
-    "                (density_level, signal_duration, datetime.now().isoformat()),\n",
-    "            )\n",
-    "\n",
-    "    def log_emergency(self, vehicle_type, lane):\n",
-    "        with self._connect() as conn:\n",
-    "            conn.execute(\n",
-    "                \"INSERT INTO emergency_log (vehicle_type, lane, timestamp) VALUES (?,?,?)\",\n",
-    "                (vehicle_type, lane, datetime.now().isoformat()),\n",
-    "            )\n",
-    "\n",
-    "    def fetch_all(self, table: str, limit: int = 500):\n",
-    "        with self._connect() as conn:\n",
-    "            cur = conn.execute(f\"SELECT * FROM {table} ORDER BY id DESC LIMIT ?\", (limit,))\n",
-    "            cols = [d[0] for d in cur.description]\n",
-    "            rows = cur.fetchall()\n",
-    "        return cols, rows"
-   ]
-  }
- ],
- "metadata": {
-  "language_info": {
-   "name": "python"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 5
-}
+
+"""
+SQLite persistence layer for the Traffic Monitoring System.
+"""
+
+import sqlite3
+from datetime import datetime
+from contextlib import contextmanager
+from config import DB_PATH
+
+
+class Database:
+    def __init__(self, db_path: str = DB_PATH):
+        self.db_path = db_path
+        self._init_tables()
+
+    @contextmanager
+    def _connect(self):
+        conn = sqlite3.connect(self.db_path)
+        try:
+            yield conn
+            conn.commit()
+        finally:
+            conn.close()
+
+    def _init_tables(self):
+        schema = """
+        CREATE TABLE IF NOT EXISTS vehicle_events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            track_id INTEGER,
+            vehicle_type TEXT,
+            lane INTEGER,
+            timestamp TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS density_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            vehicle_count INTEGER,
+            density_level TEXT,
+            timestamp TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS speed_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            track_id INTEGER,
+            vehicle_type TEXT,
+            speed_kmph REAL,
+            overspeed INTEGER,
+            timestamp TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS violations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            violation_type TEXT,
+            track_id INTEGER,
+            screenshot_path TEXT,
+            timestamp TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS signal_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            density_level TEXT,
+            signal_duration INTEGER,
+            timestamp TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS prediction_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            horizon_minutes INTEGER,
+            predicted_volume REAL,
+            timestamp TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS emergency_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            vehicle_type TEXT,
+            lane INTEGER,
+            timestamp TEXT
+        );
+        """
+        with self._connect() as conn:
+            conn.executescript(schema)
+
+    def log_vehicle_event(self, track_id, vehicle_type, lane):
+        with self._connect() as conn:
+            conn.execute(
+                "INSERT INTO vehicle_events (track_id, vehicle_type, lane, timestamp) VALUES (?,?,?,?)",
+                (track_id, vehicle_type, lane, datetime.now().isoformat()),
+            )
+
+    def log_density(self, vehicle_count, density_level):
+        with self._connect() as conn:
+            conn.execute(
+                "INSERT INTO density_log (vehicle_count, density_level, timestamp) VALUES (?,?,?)",
+                (vehicle_count, density_level, datetime.now().isoformat()),
+            )
+
+    def log_speed(self, track_id, vehicle_type, speed_kmph, overspeed):
+        with self._connect() as conn:
+            conn.execute(
+                "INSERT INTO speed_log (track_id, vehicle_type, speed_kmph, overspeed, timestamp) VALUES (?,?,?,?,?)",
+                (track_id, vehicle_type, speed_kmph, int(overspeed), datetime.now().isoformat()),
+            )
+
+    def log_violation(self, violation_type, track_id, screenshot_path):
+        with self._connect() as conn:
+            conn.execute(
+                "INSERT INTO violations (violation_type, track_id, screenshot_path, timestamp) VALUES (?,?,?,?)",
+                (violation_type, track_id, screenshot_path, datetime.now().isoformat()),
+            )
+
+    def log_signal(self, density_level, signal_duration):
+        with self._connect() as conn:
+            conn.execute(
+                "INSERT INTO signal_log (density_level, signal_duration, timestamp) VALUES (?,?,?)",
+                (density_level, signal_duration, datetime.now().isoformat()),
+            )
+
+    def log_emergency(self, vehicle_type, lane):
+        with self._connect() as conn:
+            conn.execute(
+                "INSERT INTO emergency_log (vehicle_type, lane, timestamp) VALUES (?,?,?)",
+                (vehicle_type, lane, datetime.now().isoformat()),
+            )
+
+    def fetch_all(self, table: str, limit: int = 500):
+        with self._connect() as conn:
+            cur = conn.execute(f"SELECT * FROM {table} ORDER BY id DESC LIMIT ?", (limit,))
+            cols = [d[0] for d in cur.description]
+            rows = cur.fetchall()
+        return cols, rows
